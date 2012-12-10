@@ -29,7 +29,7 @@ OPEN_PORTS
 
 credentials.py
 --------------
-The credentials that should be used for connecting to and operating on the security group specified in the defaults.py. If you don't have access to update the security groups with these credentials, the script will fail.
+*You should create this file!* This file contains the credentials that should be used for connecting to and operating on the security group specified in the defaults.py. If you don't have access to update the security groups with these credentials, the script will fail.
 
 AWS_ACCESS_KEY_ID
     Access key ID from AWS
