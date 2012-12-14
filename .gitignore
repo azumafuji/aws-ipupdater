@@ -1,3 +1,4 @@
 *.pyc
 credentials.py
 prev_ips.dat
+.idea
