@@ -18,7 +18,7 @@ def load_old_ip():
         old_ip = pickle.load(file)
         file.close()
     except:
-        old_ip = none
+        old_ip = None
 
     return old_ip
 
