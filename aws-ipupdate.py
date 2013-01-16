@@ -8,6 +8,7 @@ import pickle
 import urllib2
 from datetime import datetime
 from boto.ec2.connection import EC2Connection
+import json
 
 def load_old_ip():
     """
@@ -69,10 +70,9 @@ if old_ip is not None:
 else:
     old_grant = None
 
-headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20100101 Firefox/12.0'}
-req = urllib2.Request(
-    'http://automation.whatismyip.com/n09230945.asp', None, headers)
-ext_ip = urllib2.urlopen(req).read()
+req = urllib2.Request('http://jsonip.com', headers = {'Content-Type': 'application/json'})
+ext_ip = json.loads(urllib2.urlopen(req).read())['ip']
+
 save_old_ip(ext_ip)
 new_grant = ext_ip + '/32'
 
