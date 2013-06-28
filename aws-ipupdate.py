@@ -32,25 +32,31 @@ def save_old_ip(ip):
     except Exception, e:
         print "Failed to save old IP"
 
-# Some defaults
+## Some defaults
+# IPs that we should not change
 DONT_TOUCH = ('40.0.61.128', '74.93.92.201')
+
+# The security group we want to update
 PARENT_NAME = 'dev'
+
+# typical ports that we need to be using
 OPEN_PORTS = (('tcp', '80', '80'),
               ('tcp', '443', '443'),
-              ('tcp', '22', '22'),
-              ('tcp', '5672', '5672'),
-              ('tcp', '55672', '55672'))
+              ('tcp', '22', '22'))
+
 # import local defaults
 from defaults import *
 
-# default credentials
+# default credentials - we get these from a file called credentials.py 
 AWS_ACCESS_KEY_ID = ''
 AWS_SECRET_ACCESS_KEY = ''
 
 # import local credentials
 from credentials import *
 
-conn = EC2Connection(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
+conn = EC2Connection(AWS_ACCESS_KEY_ID, 
+                     AWS_SECRET_ACCESS_KEY)
+                     
 sgs = conn.get_all_security_groups()
 
 parent_sg = None
@@ -70,10 +76,10 @@ if old_ip is not None:
 else:
     old_grant = None
 
-req = urllib2.Request('http://jsonip.com', headers = {'Content-Type': 'application/json'})
+req = urllib2.Request('http://jsonip.com', 
+                      headers = {'Content-Type': 'application/json'})
 ext_ip = json.loads(urllib2.urlopen(req).read())['ip']
 
-save_old_ip(ext_ip)
 new_grant = ext_ip + '/32'
 
 if ext_ip in DONT_TOUCH:
@@ -81,8 +87,13 @@ if ext_ip in DONT_TOUCH:
     exit()
 
 if old_grant == new_grant:
-    print "Your IP hasn't changed...try again later."
-    exit()
+    response = raw_input("Your IP hasn't changed. Do you want to update anyway? (y/n)?")
+    if str(response) != "y":
+        exit()
+
+# Save the new external IP
+save_old_ip(ext_ip)
+
 
 # Clear out all the old rules in this group.
 if not old_ip is None:
