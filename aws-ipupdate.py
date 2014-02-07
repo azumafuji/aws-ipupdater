@@ -32,17 +32,6 @@ def save_old_ip(ip):
     except Exception, e:
         print "Failed to save old IP"
 
-## Some defaults
-# IPs that we should not change
-DONT_TOUCH = ('40.0.61.128', '74.93.92.201')
-
-# The security group we want to update
-PARENT_NAME = 'dev'
-
-# typical ports that we need to be using
-OPEN_PORTS = (('tcp', '80', '80'),
-              ('tcp', '443', '443'),
-              ('tcp', '22', '22'))
 
 # import local defaults
 from defaults import *
