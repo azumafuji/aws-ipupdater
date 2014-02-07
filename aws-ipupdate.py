@@ -3,21 +3,22 @@ Adds current IP address to security group and will update and remove
 old rules from previous IP addresses
 """
 
-import os
 import pickle
 import urllib2
-from datetime import datetime
 from boto.ec2.connection import EC2Connection
 import json
+# import local defaults
+from defaults import *
+
 
 def load_old_ip():
     """
     Get the old IP from a file and return it.
     """
     try:
-        file = open('prev_ips.dat')
-        old_ip = pickle.load(file)
-        file.close()
+        dat_file = open('prev_ips.dat')
+        old_ip = pickle.load(dat_file)
+        dat_file.close()
     except:
         old_ip = None
 
@@ -26,17 +27,14 @@ def load_old_ip():
 
 def save_old_ip(ip):
     try:
-        file = open('prev_ips.dat', 'w')
-        pickle.dump(ip, file)
-        file.close()
+        dat_file = open('prev_ips.dat', 'w')
+        pickle.dump(ip, dat_file)
+        dat_file.close()
     except Exception, e:
         print "Failed to save old IP"
 
 
-# import local defaults
-from defaults import *
-
-# default credentials - we get these from a file called credentials.py 
+# default credentials - we get these from a file called credentials.py
 AWS_ACCESS_KEY_ID = ''
 AWS_SECRET_ACCESS_KEY = ''
 
@@ -56,7 +54,7 @@ for sg in sgs:
 sg = None
 
 if parent_sg is None:
-    print "The parent security group %s was not found." % (PARENT_NAME)
+    print "The parent security group %s was not found." % PARENT_NAME
     exit()
 
 old_ip = load_old_ip()
@@ -66,7 +64,7 @@ else:
     old_grant = None
 
 req = urllib2.Request('http://jsonip.com', 
-                      headers = {'Content-Type': 'application/json'})
+                      headers={'Content-Type': 'application/json'})
 ext_ip = json.loads(urllib2.urlopen(req).read())['ip']
 
 new_grant = ext_ip + '/32'
@@ -76,7 +74,8 @@ if ext_ip in DONT_TOUCH:
     exit()
 
 if old_grant == new_grant:
-    response = raw_input("Your IP hasn't changed. Do you want to update anyway? (y/n)?")
+    prompt = "Your IP hasn't changed. Do you want to update anyway? (y/n)?"
+    response = raw_input(prompt)
     if str(response) != "y":
         exit()
 
